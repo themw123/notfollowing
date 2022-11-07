@@ -4,9 +4,11 @@ package notfollowingx;
 import org.bson.Document;
 import com.mongodb.ConnectionString;
 import com.mongodb.MongoClientSettings;
+import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.Updates;
@@ -46,35 +48,46 @@ public class Mongodb {
 		follower = databaseNotFollowing.getCollection("follower");
 		Logger mongoLogger = Logger.getLogger("org.mongodb");
 		mongoLogger.setLevel(Level.WARNING);
-		setSession();
+		getSessionDB();
 	}
 	
-	private void setSession() {
+	private void getSessionDB() {
         Document doc = sessions.find(Filters.eq("name", "instagram")).first();
         sessionId = doc.getString("sessionId");
 	    ds_user_id = doc.getString("ds_user_id");
 	}
 	
-	public void setFollower(ArrayList<Person> followers) {
+	public void setFollowerDB(ArrayList<Person> followers) {
        
+		//del all
+		follower.deleteMany(new Document());
+		
+		//add
 		List<Document> followersDocuments = new ArrayList<Document>();
         for(Person follower : followers) {
         	Document document = new Document().append("name", follower.getName()).append("id", follower.getId());
         	followersDocuments.add(document);
         }
-        follower.insertMany(followersDocuments);
-        
+        follower.insertMany(followersDocuments);        
+	}
+	
+	public ArrayList<Person> getFollowerDB() {
 		
-		/*
-        List<Document> movieList = Arrays.asList(
-                new Document().append("title", "Short Circuit 3"),
-                new Document().append("title", "The Lego Frozen Movie"));
-        follower.insertMany(movieList);
-	*/
+		ArrayList<Person> followers = new ArrayList<Person>();
+		
+	    FindIterable<Document> iterDoc = follower.find();
+	    MongoCursor<Document> it = iterDoc.iterator();
+	    while (it.hasNext()) {    	
+	    	Document document = it.next();
+	    	Person person = new Person(document.getLong("id"), document.getString("name"));
+	    	followers.add(person);
+	    }
+	    return followers;
+
         
 	}
 	
-	public void saveSession(String sessionString) {
+	public void setSessionDB(String sessionString) {
 	      sessions.updateOne(Filters.eq("name","instagram"), Updates.set("sessionId", sessionString));
 	}
 

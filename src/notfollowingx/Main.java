@@ -22,7 +22,7 @@ public class Main {
 		if(!instagram.getSessionIdValid()) {
 			instagram.connect("login", username, password);
 			//set new session
-			mdb.saveSession(instagram.getSessionId());
+			mdb.setSessionDB(instagram.getSessionId());
 		}
 		//check session again
 		if(!instagram.getSessionIdValid()) {
@@ -31,15 +31,57 @@ public class Main {
 		}
 		
 		//get old follower
-		
+		ArrayList<Person> followersOld = mdb.getFollowerDB();
 		
 		//get new followers
 		instagram.setFollowingAndFollowers("followers");
-		ArrayList<Person> followers = instagram.getFollowers();
-		//set followers in mongodb
-		mdb.setFollower(followers);
-		//compare old and new
+		ArrayList<Person> followersNew = instagram.getFollowers();
+		//update followers in mongodb
+		mdb.setFollowerDB(followersNew);
 		
+		//compare old with new
+		ArrayList<Person> notFollowAnymore = new ArrayList<Person>();
+		for(Person old : followersOld) {
+			boolean still = false;
+			for(Person neww : followersNew) {
+				if(old.getId() == neww.getId()) {
+					still = true;
+					break;
+				}
+			}
+			if(!still) {
+				notFollowAnymore.add(old);
+			}
+		}
+		
+		
+		if(notFollowAnymore.isEmpty()) {
+	        System.out.println("No one has left you.");
+			return;
+		}
+		//send whatsapp
+		Whatsapp w = new Whatsapp();
+		String textWhatsapp = null;
+		String textConsole = null;
+
+        if(notFollowAnymore.size() == 1) {
+        	textWhatsapp = "Folgende%20Person%20folgt%20dir%20seit%20der%20letzten%20%C3%9Cberpr%C3%BCfung%20nicht%20mehr%3A%0A";
+        	textConsole = "Folgende Person folgt dir seit der letzten Ueberpruefung nicht mehr:";
+        }
+        else {
+        	textWhatsapp = "Folgende%20Personen%20folgen%20dir%20seit%20der%20letzten%20%C3%9Cberpr%C3%BCfung%20nicht%20mehr%3A%0A";
+        	textConsole = "Folgende Personen folgen dir seit der letzten Ueberpruefung nicht mehr: \n ";
+        }
+        
+        for(Person person : notFollowAnymore) {
+        	textWhatsapp = textWhatsapp + person.getName() + "%0A";  
+        	textConsole = textConsole + person.getName() + "\n";  
+
+        }
+
+        w.sendMessage(textWhatsapp);
+        System.out.println(textConsole);
+
 	}
 
 }
