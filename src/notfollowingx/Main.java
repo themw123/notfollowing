@@ -37,7 +37,7 @@ public class Main {
 		instagram.setFollowingAndFollowers("followers");
 		ArrayList<Person> followers = instagram.getFollowers();
 		//set followers in mongodb
-		
+		mdb.setFollower(followers);
 		//compare old and new
 		
 	}
