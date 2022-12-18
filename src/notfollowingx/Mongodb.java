@@ -21,7 +21,7 @@ import java.util.logging.Level;
 
 public class Mongodb {
 
-	private final String endpoint = "mongodb+srv://marv:***REMOVED***@cluster0.4ejve.mongodb.net/?retryWrites=true&w=majority";
+	private String endpoint;
 	private ConnectionString connectionString;
 	private MongoClientSettings settings;
 	private MongoClient mongoClient;
@@ -33,7 +33,8 @@ public class Mongodb {
 	private String sessionId;
 	private String ds_user_id;
 
-	public Mongodb() {
+	public Mongodb(String password) {
+		endpoint = "mongodb+srv://marv:" + password + "@cluster0.4ejve.mongodb.net/?retryWrites=true&w=majority";
 		// diable mongo logger
 		Logger mongoLogger = Logger.getLogger("org.mongodb.driver");
 		mongoLogger.setLevel(Level.SEVERE);

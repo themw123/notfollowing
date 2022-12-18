@@ -14,7 +14,7 @@ public class Main {
 		String username = "***REMOVED***";
 		String password = "XXXXXX";
 		// get session from mongodb
-		Mongodb mdb = new Mongodb();
+		Mongodb mdb = new Mongodb(password);
 		mdb.getSessionDB();
 		String ds_user_id = mdb.getDs_user_id();
 		String sessionId = mdb.getSessionId();
