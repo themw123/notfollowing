@@ -12,7 +12,7 @@ public class Main {
 	public static void main(String[] args) {
 
 		String username = "***REMOVED***";
-		String password = "***REMOVED***!";
+		String password = "XXXXXX";
 		// get session from mongodb
 		Mongodb mdb = new Mongodb();
 		mdb.getSessionDB();
