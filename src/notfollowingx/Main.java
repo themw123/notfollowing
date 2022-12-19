@@ -1,5 +1,8 @@
 package notfollowingx;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -12,7 +15,7 @@ public class Main {
 	public static void main(String[] args) {
 
 		String username = "***REMOVED***";
-		String password = "XXXXXX";
+		String password = getConfig();
 		// get session from mongodb
 		Mongodb mdb = new Mongodb(password);
 		mdb.getSessionDB();
@@ -81,6 +84,22 @@ public class Main {
 
 		w.sendMessage(textWhatsapp);
 		System.out.println(textConsole);
+
+	}
+
+	public static String getConfig() {
+		String key = "";
+		try {
+			BufferedReader reader = new BufferedReader(new FileReader("config.txt"));
+			String line;
+			while ((line = reader.readLine()) != null) {
+				key = line;
+			}
+			reader.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return key;
 
 	}
 
