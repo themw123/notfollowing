@@ -4,7 +4,7 @@ Dieses Script informiert einen, wenn ein Follower bei Instagram entfolgt ist.
 
 ToDo:
 - Projekt abhängig von instagram-statistics. Es wird mittels maven die selbe instagram.java genutzt
-- config.txt anlegen und dort drin Password von MongoDB speichern
+- config.txt benötigt Password von MongoDB
 
 Features:
 
