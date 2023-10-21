@@ -4,8 +4,6 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import Instagram.Instagram;
 import Instagram.Person;
@@ -14,10 +12,11 @@ public class Main {
 
 	public static void main(String[] args) {
 
-		String username = "***REMOVED***";
-		String password = getConfig();
+		String username = "marvin";
+		String passwordMongo = getPassword(0);
+		String passwordInsta = getPassword(1);
 		// get session from mongodb
-		Mongodb mdb = new Mongodb(password);
+		Mongodb mdb = new Mongodb(passwordMongo);
 		mdb.getSessionDB();
 		String ds_user_id = mdb.getDs_user_id();
 		String sessionId = mdb.getSessionId();
@@ -25,8 +24,9 @@ public class Main {
 		Instagram instagram = new Instagram();
 		instagram.connect("session", sessionId, ds_user_id);
 		if (!instagram.getSessionIdValid()) {
-			instagram.connect("login", username, password);
+			instagram.connect("login", username, passwordInsta);
 			// set new session
+			String test = instagram.getSessionId();
 			mdb.setSessionDB(instagram.getSessionId());
 		}
 		// check session again
@@ -87,20 +87,24 @@ public class Main {
 
 	}
 
-	public static String getConfig() {
+	public static String getPassword(int index) {
 		String key = "";
 		try {
 			BufferedReader reader = new BufferedReader(new FileReader("config.txt"));
 			String line;
+			int counter = 0;
 			while ((line = reader.readLine()) != null) {
-				key = line;
+				if (counter == index) {
+					key = line;
+					break;
+				}
+				counter++;
 			}
 			reader.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		return key;
-
 	}
 
 }
